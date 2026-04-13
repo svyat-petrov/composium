@@ -21,3 +21,10 @@ __pycache__/
 .venv/
 venv/
 env/
+
+# Tool caches
+.ruff_cache/
+.mypy_cache/
+
+# metadata pip
+*.egg-info/
