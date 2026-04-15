@@ -9,8 +9,8 @@ Usage:
         payment_form = Embedded(PaymentWidget)
 """
 
-from .element import Button, Element, Input
 from .cross_platform import CrossPlatformElement
+from .element import Button, Element, Input
 from .embedded import Embedded
 
 __all__ = [
