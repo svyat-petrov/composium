@@ -26,6 +26,7 @@ classifiers = [
 dependencies = [
     "Appium-Python-Client>=4.0.0",
     "selenium>=4.25.0",
+    "attrs>=23.0.0",
 ]
 
 [project.optional-dependencies]
