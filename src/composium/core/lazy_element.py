@@ -8,7 +8,7 @@ from appium.webdriver.webdriver import WebDriver
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.remote.webelement import WebElement
 
-from .control import Control
+from .element_mixin import ElementMixin
 from .query import Query
 
 logger = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ class LazyElement:
     - Indexing into element collections (__getitem__)
     - Callable behavior for actions like click (__call__)
     - Automatic retry on NoSuchElementException with configurable polling
-    - Control binding for custom interaction methods
+    - ElementMixin injection for custom interaction methods
     """
 
     def __init__(
@@ -33,13 +33,13 @@ class LazyElement:
             parent: WebDriver | WebElement,
             *,
             call: t.Callable[[LazyElement], t.Callable] | None = None,
-            control: type[Control] | None = None,
+            mixin: type[ElementMixin] | None = None,
             polling_timeout: float = 5.0,
     ):
         self._query = query
         self._parent = parent
         self._call = call
-        self._control = control
+        self._mixin = mixin
         self._polling_timeout = polling_timeout
         self._cached_element: ElementOrList | None = None
 
@@ -111,8 +111,8 @@ class LazyElement:
 
         if self._cached_element is None:
             self._cached_element = self._query.execute(self._parent)
-            if self._control is not None:
-                self._bind_control()
+            if self._mixin is not None:
+                self._bind_mixin()
 
 
     def exists(self) -> bool:
@@ -142,16 +142,16 @@ class LazyElement:
                     f"Element not found after retry: {self._query.locator}"
                 ) from None
 
-    def _bind_control(self) -> None:
+    def _bind_mixin(self) -> None:
         """Dynamically reassign WebElement's class to include Control methods."""
 
-        control_cls = self._control
+        mixin_cls = self._mixin
 
-        def bind(elem:WebElement) -> None:
-            assert control_cls is not None
+        def bind(elem: WebElement) -> None:
+            assert mixin_cls is not None
             elem.__class__ = type(
-                control_cls.__name__,
-                (control_cls,) + type(elem).__mro__,
+                mixin_cls.__name__,
+                (mixin_cls,) + type(elem).__mro__,
                 {}
             )
 
