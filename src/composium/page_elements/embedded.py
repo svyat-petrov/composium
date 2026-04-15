@@ -38,6 +38,12 @@ class Embedded:
         parent = instance.parent
 
         if self._parent_locator is not None:
-            parent = Query(self._parent_locator).execute(parent)
+            root = Query(self._parent_locator).execute(parent)
+            if isinstance(root, list):
+                raise TypeError(
+                    f"Widget parent locator must resolve to a single element, "
+                    f"got list: {self._parent_locator}"
+                )
+            parent = root
 
         return self._page_class(parent)
