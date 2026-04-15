@@ -131,14 +131,11 @@ class Query:
     def _find_all(self, parent: WebDriver | WebElement) -> list[t.Any]:
         """Find multiple elements, applying wrap function to each if provided."""
         elements = parent.find_elements(self._locator.by, self._locator.value)
-        if not elements:
-            raise NoSuchElementException(
-                f"Elements not found: {self._locator}"
-            )
 
         if self._wrap is not None:
             return [self._wrap(element) for element in elements]
 
         return elements
+
 
 
