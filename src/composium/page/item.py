@@ -1,8 +1,17 @@
 from __future__ import annotations
 
+import typing as t
+
+import attrs
 from selenium.webdriver.remote.webelement import WebElement
 
 from .base_page import BasePage
+
+
+@attrs.define
+class ItemMeta:
+    """Metadata for Item: name for reporting."""
+    name: str | None = attrs.field(default=None)
 
 
 class Item(BasePage):
@@ -23,6 +32,13 @@ class Item(BasePage):
         class PaymentWidget(Widget):
             _methods = Element("xpath::...", multiple=True, item=PaymentMethodItem)
     """
+    __meta__: t.ClassVar[ItemMeta] = ItemMeta()
+
+    @property
+    def meta(self) -> ItemMeta:
+        """Item metadata: name."""
+        return self.__meta__
+
     def is_displayed(self) -> bool:
         """Check if the item's root element is displayed."""
         if isinstance(self._parent, WebElement):
