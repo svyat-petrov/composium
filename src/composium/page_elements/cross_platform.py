@@ -18,10 +18,9 @@ class CrossPlatformElement:
         class ReceiverItem(Item):
             _name = CrossPlatformElement(
                 android=Element("id::receiver_name"),
-                ios=Element("accessibility-id::receiver_name"),
+                ios=Element("accessibility-id::receiver_name")
             )
     """
-
     def __init__(self, *, android: Element, ios: Element):
         self._android = android
         self._ios = ios
@@ -46,12 +45,20 @@ class CrossPlatformElement:
         driver = instance.driver
 
         if is_android(driver):
-            return self._android
+            return t.cast(Element, self._android)
         if is_ios(driver):
-            return self._ios
+            return t.cast(Element, self._ios)
 
         raise AttributeError(
             f"CrossPlatformElement '{self._attr_name}' cannot resolve platform "
             f"for driver '{driver.__class__.__name__}'. "
             f"Expected Android or iOS driver."
+        )
+
+    @classmethod
+    def from_id(cls, element_id: str, *, element_class: type[Element] = Element) -> CrossPlatformElement:
+        """Create CrossPlatformElement with id (Android) and accessibility-id (iOS)."""
+        return cls(
+            android=element_class(f'id::{element_id}'),
+            ios=element_class(f'accessibility-id::{element_id}'),
         )
