@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import typing as t
 
+from ..utils.platform import is_android, is_ios
 from .element import Element
 
 if t.TYPE_CHECKING:
@@ -40,8 +41,6 @@ class CrossPlatformElement:
 
     def _resolve_element(self, instance: BasePage) -> Element:
         """Detect platform from driver and return matching Element."""
-        from ..utils.platform import is_android, is_ios
-
         driver = instance.driver
 
         if is_android(driver):
