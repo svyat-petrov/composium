@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import time
 import typing as t
 
 from appium.webdriver.webdriver import WebDriver
@@ -11,6 +10,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from .diagnostics import attach_failure_diagnostics
 from .driver import resolve_driver
 from .element_mixin import ElementMixin
+from .polling import PollingConfig, poll
 from .query import Query
 
 logger = logging.getLogger(__name__)
@@ -25,7 +25,8 @@ class LazyElement:
     - Iteration over multiple elements (__iter__)
     - Indexing into element collections (__getitem__)
     - Callable behavior for actions like click (__call__)
-    - Automatic retry on NoSuchElementException with configurable polling
+    - Configurable polling with retry on NoSuchElementException
+    - Automatic screenshot + page_source attachment on failure
     - ElementMixin injection for custom interaction methods
     """
 
@@ -42,7 +43,7 @@ class LazyElement:
         self._parent = parent
         self._call = call
         self._mixin = mixin
-        self._polling_timeout = polling_timeout
+        self._polling = polling
         self._cached_element: ElementOrList | None = None
 
 
@@ -97,6 +98,13 @@ class LazyElement:
         return self._parent
 
     @property
+    def polling(self) -> PollingConfig:
+        """Return polling config, falling back to default if not set."""
+        if self._polling is None:
+            return PollingConfig()
+        return self._polling
+
+    @property
     def count(self) -> int:
         """Return number of found elements. 0 if not found, 1 if single."""
         self._ensure_loaded()
@@ -129,21 +137,21 @@ class LazyElement:
 
 
     def _ensure_loaded(self) -> None:
-        """Load element with one retry after polling_timeout."""
+        """Load element with configurable polling retry."""
         try:
             self.load()
         except NoSuchElementException:
-            logger.debug(
-                f"Element not found, retrying after {self._polling_timeout} second: "
-                f"{self._query.locator}"
-            )
-            time.sleep(self._polling_timeout)
             try:
-                self.load(reload=True)
+                poll(
+                    lambda: self.load(reload=True),
+                    config=self.polling,
+                    catch=NoSuchElementException,
+                )
             except NoSuchElementException:
                 self._attach_diagnostics()
                 raise AssertionError(
-                    f"Element not found after retry: {self._query.locator}"
+                    f"Element not found after polling {self.polling}: "
+                    f"{self._query.locator}"
                 ) from None
 
     def _bind_mixin(self) -> None:
