@@ -1,4 +1,5 @@
-from .core import ElementMixin, LazyElement, Locator, Query
+from .core import ElementMixin, LazyElement, Locator, PollingConfig, Query
+from .core.reporter import AllureReporter, ReporterProtocol, WithoutReporter, configure_reporter, get_reporter
 from .decorators import define
 from .factory import ScreenFactory
 from .page import BasePage, Item, Screen, Widget
@@ -11,6 +12,13 @@ __all__ = [
     "Query",
     "ElementMixin",
     "LazyElement",
+    "PollingConfig",
+    # Reporter
+    "ReporterProtocol",
+    "WithoutReporter",
+    "AllureReporter",
+    "configure_reporter",
+    "get_reporter",
     # Page Elements
     "Element",
     "Button",
