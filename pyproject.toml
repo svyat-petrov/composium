@@ -27,10 +27,12 @@ dependencies = [
     "Appium-Python-Client>=4.0.0",
     "selenium>=4.25.0",
     "attrs>=23.0.0",
-    "allure-python-commons>=2.13.0",
 ]
 
 [project.optional-dependencies]
+allure = [
+    "allure-python-commons>=2.13.0",
+]
 dev = [
     "pytest>=8.0.0",
     "allure-pytest>=2.13.0",
@@ -51,7 +53,11 @@ target-version = "py312"
 line-length = 120
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "N", "W"]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM", "RUF"]
+ignore = ["RUF022"]
+
+[tool.ruff.format]
+quote-style = "single"
 
 [tool.mypy]
 python_version = "3.12"
