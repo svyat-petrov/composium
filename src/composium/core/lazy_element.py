@@ -15,7 +15,7 @@ from .query import Query
 
 logger = logging.getLogger(__name__)
 
-ElementOrList = t.Union[WebElement, list[WebElement], t.Any, list[t.Any]]
+ElementOrList = WebElement | list[WebElement] | t.Any | list[t.Any]
 
 class LazyElement:
     """Proxy object that locates element(s) lazily — only when accessed.
@@ -55,7 +55,7 @@ class LazyElement:
         return base
 
 
-    def __call__(self, *args, **kwargs) -> t.Any:
+    def __call__(self, *args: t.Any, **kwargs: t.Any) -> t.Any:
         if self._call is not None:
             return self._call(self)(*args, **kwargs)
         raise TypeError(f"{self!r} is not callable")
@@ -156,14 +156,13 @@ class LazyElement:
 
     def _bind_mixin(self) -> None:
         """Dynamically reassign WebElement's class to include Control methods."""
-
         mixin_cls = self._mixin
 
         def bind(elem: WebElement) -> None:
             assert mixin_cls is not None
             elem.__class__ = type(
                 mixin_cls.__name__,
-                (mixin_cls,) + type(elem).__mro__,
+                (mixin_cls, *type(elem).__mro__),
                 {}
             )
 

@@ -20,7 +20,7 @@ class Locator:
         'name::search_field'
     """
 
-    _STRATEGY_MAP: dict[str, str] = {
+    _STRATEGY_MAP: t.ClassVar[dict[str, str]] = {
         'id': By.ID,
         'xpath': By.XPATH,
         'css': By.CSS_SELECTOR,
@@ -84,11 +84,7 @@ class Query:
         multiple: bool = False,
         wrap: t.Callable[[WebElement], t.Any] | None = None,
     ):
-        if isinstance(locator, str):
-            final_locator = Locator.from_string(locator)
-        else:
-            final_locator = locator
-
+        final_locator = Locator.from_string(locator) if isinstance(locator, str) else locator
         self._locator = final_locator
         self._multiple = multiple
         self._wrap = wrap
@@ -121,7 +117,7 @@ class Query:
         except NoSuchElementException:
             raise NoSuchElementException(
                 f"Element not found: {self._locator}"
-            )
+            ) from None
 
         if self._wrap is not None:
             return self._wrap(element)

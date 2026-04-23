@@ -22,7 +22,7 @@ def resolve_driver(context: t.Any) -> WebDriver | None:
         if isinstance(context, WebElement):
             return t.cast(WebDriver, context.parent)
         if hasattr(context, '_parent'):
-            context = getattr(context, '_parent')
+            context = context._parent
         else:
             return None
     return None
