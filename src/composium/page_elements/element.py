@@ -4,6 +4,7 @@ import typing as t
 
 from ..core.element_mixin import ElementMixin
 from ..core.lazy_element import LazyElement
+from ..core.polling import PollingConfig
 from ..core.query import Locator, Query
 
 if t.TYPE_CHECKING:
@@ -26,7 +27,8 @@ class Element:
             *,
             multiple: bool = False,
             item: type[BasePage] | None = None,
-            mixin: type[ElementMixin] | None = None
+            mixin: type[ElementMixin] | None = None,
+            polling: PollingConfig | None = None
     ):
         self._query = Query(
             locator,
@@ -34,6 +36,7 @@ class Element:
             wrap=item
         )
         self._mixin = mixin
+        self._polling = polling
 
 
     def __repr__(self) -> str:
@@ -54,11 +57,12 @@ class Element:
 
 
     def _create_lazy_element(self, parent: t.Any) -> LazyElement:
-        """Create instance LazyElement with stored query, mixin and parent."""
+        """Create instance LazyElement with stored query, mixin, polling and parent."""
         return LazyElement(
             self._query,
             parent,
-            mixin=self._mixin
+            mixin=self._mixin,
+            polling=self._polling
         )
 
 
