@@ -8,6 +8,8 @@ from appium.webdriver.webdriver import WebDriver
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.remote.webelement import WebElement
 
+from .diagnostics import attach_failure_diagnostics
+from .driver import resolve_driver
 from .element_mixin import ElementMixin
 from .query import Query
 
@@ -70,6 +72,7 @@ class LazyElement:
         if not isinstance(self._cached_element, list):
             raise TypeError(f"{self!r} is not subscriptable (single element)")
         if not (0 <= index < len(self._cached_element)):
+            self._attach_diagnostics()
             raise IndexError(
                 f"Index {index} out of range. "
                 f"Available elements: {len(self._cached_element)}. "
@@ -138,6 +141,7 @@ class LazyElement:
             try:
                 self.load(reload=True)
             except NoSuchElementException:
+                self._attach_diagnostics()
                 raise AssertionError(
                     f"Element not found after retry: {self._query.locator}"
                 ) from None
@@ -161,3 +165,9 @@ class LazyElement:
                     bind(element)
         elif isinstance(self._cached_element, WebElement):
             bind(self._cached_element)
+
+    def _attach_diagnostics(self) -> None:
+        """Attach screenshot and page_source to the reporter on failure."""
+        driver = resolve_driver(self._parent)
+        if driver is not None:
+            attach_failure_diagnostics(driver)
