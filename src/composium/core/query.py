@@ -26,7 +26,7 @@ class Locator:
         'css': By.CSS_SELECTOR,
         'name': By.NAME,
         'accessibility-id': AppiumBy.ACCESSIBILITY_ID,
-        'class': By.CLASS_NAME
+        'class': By.CLASS_NAME,
     }
 
     def __init__(self, by: str, value: str):
@@ -45,8 +45,8 @@ class Locator:
             by = cls._STRATEGY_MAP.get(strategy)
             if by is None:
                 raise ValueError(
-                    f"Unknown locator strategy '{strategy}'."
-                    f"Supported: {list(cls._STRATEGY_MAP.keys())}"
+                    f'Unknown locator strategy "{strategy}".'
+                    f'Supported: {list(cls._STRATEGY_MAP.keys())}'
                 )
             return cls(by=by, value=value)
 
@@ -66,7 +66,7 @@ class Locator:
         return self._value
 
     def __repr__(self) -> str:
-        return f"Locator({self._by}={self._value})"
+        return f'Locator({self._by}={self._value})'
 
 
 class Query:
@@ -89,18 +89,15 @@ class Query:
         self._multiple = multiple
         self._wrap = wrap
 
-
     @property
     def locator(self) -> Locator:
         """Return the parsed Locator object."""
         return self._locator
 
-
     @property
     def multiple(self) -> bool:
         """Return True if searching for multiple elements."""
         return self._multiple
-
 
     def execute(self, parent: WebDriver | WebElement) -> WebElement | list[WebElement] | t.Any:
         """Find element(s) using the stored locator against the given parent."""
@@ -109,20 +106,16 @@ class Query:
             return self._find_all(parent)
         return self._find_one(parent)
 
-
     def _find_one(self, parent: WebDriver | WebElement) -> WebElement | t.Any:
         """Find a single element, applying wrap function if provided."""
         try:
             element = parent.find_element(self._locator.by, self._locator.value)
         except NoSuchElementException:
-            raise NoSuchElementException(
-                f"Element not found: {self._locator}"
-            ) from None
+            raise NoSuchElementException(f'Element not found: {self._locator}') from None
 
         if self._wrap is not None:
             return self._wrap(element)
         return element
-
 
     def _find_all(self, parent: WebDriver | WebElement) -> list[t.Any]:
         """Find multiple elements, applying wrap function to each if provided."""
@@ -132,6 +125,3 @@ class Query:
             return [self._wrap(element) for element in elements]
 
         return elements
-
-
-

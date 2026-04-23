@@ -10,6 +10,7 @@ from .base_page import BasePage
 @attrs.define
 class ScreenMeta:
     """Metadata for Screen: name for reporting, deeplink for navigation."""
+
     name: str | None = attrs.field(default=None)
     deeplink: str | None = attrs.field(default=None)
 
@@ -33,4 +34,3 @@ class Screen(BasePage):
     def meta(self) -> ScreenMeta:
         """Screen metadata: name and optional deeplink."""
         return self.__meta__
-

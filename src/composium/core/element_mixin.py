@@ -8,4 +8,5 @@ class ElementMixin(WebElement):
     in LazyElement._bind_control(). This allows adding platform-specific
     behavior (e.g., InputControl with clear_input, focus) without wrapping.
     """
+
     pass

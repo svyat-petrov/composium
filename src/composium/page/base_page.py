@@ -15,15 +15,14 @@ class BasePage:
 
     All Element descriptors use instance.parent as the search root.
     """
+
     def __init__(self, parent: WebDriver | WebElement) -> None:
         self._parent = parent
-
 
     @property
     def parent(self) -> WebDriver | WebElement:
         """Search context for child element lookup."""
         return self._parent
-
 
     @property
     def driver(self) -> WebDriver:
@@ -32,6 +31,6 @@ class BasePage:
         if driver is not None:
             return driver
         raise TypeError(
-            f"Cannot resolve WebDriver from {type(self._parent).__name__}. "
-            f"Expected WebDriver, WebElement, or BasePage subclass in the parent chain."
+            f'Cannot resolve WebDriver from {type(self._parent).__name__}. '
+            f'Expected WebDriver, WebElement, or BasePage subclass in the parent chain.'
         )

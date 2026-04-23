@@ -10,10 +10,11 @@ from .reporter import get_reporter
 
 logger = logging.getLogger(__name__)
 
+
 def _timestamped_name(prefix: str, extension: str) -> str:
     """Generate a timestamped filename for diagnostic attachments."""
     now = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-    return f"{prefix}_{now}.{extension}"
+    return f'{prefix}_{now}.{extension}'
 
 
 def attach_failure_diagnostics(driver: WebDriver) -> None:
@@ -25,20 +26,16 @@ def attach_failure_diagnostics(driver: WebDriver) -> None:
     reporter = get_reporter()
     try:
         screenshot = driver.get_screenshot_as_png()
-        reporter.attach(
-            screenshot,
-            name=_timestamped_name('screenshot', 'png'),
-            attachment_type='png'
-        )
+        reporter.attach(screenshot, name=_timestamped_name('screenshot', 'png'), attachment_type='png')
     except WebDriverException:
-        logger.debug("Failed to attach screenshot on failure")
+        logger.debug('Failed to attach screenshot on failure')
 
     try:
         page_source = driver.page_source
         reporter.attach(
             page_source,
-            name=_timestamped_name("page_source", "xml"),
-            attachment_type="text",
+            name=_timestamped_name('page_source', 'xml'),
+            attachment_type='text',
         )
     except WebDriverException:
-        logger.debug("Failed to attach page_source on failure")
+        logger.debug('Failed to attach page_source on failure')

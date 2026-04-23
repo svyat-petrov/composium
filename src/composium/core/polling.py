@@ -23,9 +23,9 @@ class PollingConfig:
 
     def __init__(self, *, timeout: float = DEFAULT_TIMEOUT, delay: float = DEFAULT_DELAY) -> None:
         if timeout <= 0:
-            raise ValueError(f"timeout must be positive, got {timeout}")
+            raise ValueError(f'timeout must be positive, got {timeout}')
         if delay <= 0:
-            raise ValueError(f"delay must be positive, got {delay}")
+            raise ValueError(f'delay must be positive, got {delay}')
 
         self._timeout = timeout
         self._delay = delay
@@ -39,10 +39,11 @@ class PollingConfig:
         return self._delay
 
     def __repr__(self) -> str:
-        return f"PollingConfig(timeout={self._timeout}, delay={self._delay})"
+        return f'PollingConfig(timeout={self._timeout}, delay={self._delay})'
 
 
 CatchType = type[BaseException] | tuple[type[BaseException], ...]
+
 
 def poll(func: t.Callable[[], t.Any], *, config: PollingConfig, catch: CatchType = NoSuchElementException) -> t.Any:
     """Call func with retry loop until timeout or success.
@@ -67,13 +68,12 @@ def poll(func: t.Callable[[], t.Any], *, config: PollingConfig, catch: CatchType
         except catch as exc:
             last_error = exc
             logger.debug(
-                f"Polling retry: {exc} "
-                f"(elapsed={time.monotonic() - start_time:.1f}s, "
-                f"timeout={config.timeout}s)"
+                f'Polling retry: {exc} '
+                f'(elapsed={time.monotonic() - start_time:.1f}s, '
+                f'timeout={config.timeout}s)'
             )
             time.sleep(config.delay)
 
     raise NoSuchElementException(
-        f"Element not found after polling "
-        f"(timeout={config.timeout}s, delay={config.delay}s)"
+        f'Element not found after polling (timeout={config.timeout}s, delay={config.delay}s)'
     ) from last_error

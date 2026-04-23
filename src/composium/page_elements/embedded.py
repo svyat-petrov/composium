@@ -21,14 +21,9 @@ class Embedded:
             receiver_widget = Embedded(ReceiverWidget)
     """
 
-    def __init__(
-            self,
-            page_class: type[BasePage],
-            parent: Locator | str | None = None
-    ):
+    def __init__(self, page_class: type[BasePage], parent: Locator | str | None = None):
         self._page_class = page_class
         self._parent_locator = parent
-
 
     def __get__(self, instance: BasePage | None, owner: type) -> t.Any:
         """Instantiate nested page object with resolved parent."""
@@ -41,8 +36,8 @@ class Embedded:
             root = Query(self._parent_locator).execute(parent)
             if isinstance(root, list):
                 raise TypeError(
-                    f"Widget parent locator must resolve to a single element, "
-                    f"got list: {self._parent_locator}"
+                    f'Widget parent locator must resolve to a single element, '
+                    f'got list: {self._parent_locator}'
                 )
             parent = root
 

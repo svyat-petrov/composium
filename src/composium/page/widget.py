@@ -13,6 +13,7 @@ from .base_page import BasePage
 @attrs.define()
 class WidgetMeta:
     """Metadata for Widget: name for reporting, parent locator for scoping."""
+
     name: str | None = attrs.field(default=None)
     parent: Locator | str | None = attrs.field(default=None)
 
@@ -48,9 +49,7 @@ class Widget(BasePage):
             if isinstance(result, WebElement):
                 return result
             raise TypeError(
-                f"Widget parent locator must resolve to a single WebElement, "
-                f"got {type(result).__name__}"
+                f'Widget parent locator must resolve to a single WebElement, '
+                f'got {type(result).__name__}'
             )
         return self._parent
-
-

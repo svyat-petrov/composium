@@ -14,9 +14,9 @@ from .element import Button, Element, Input
 from .embedded import Embedded
 
 __all__ = [
-    "Element",
-    "Button",
-    "Input",
-    "Embedded",
-    "CrossPlatformElement",
+    'Element',
+    'Button',
+    'Input',
+    'Embedded',
+    'CrossPlatformElement',
 ]

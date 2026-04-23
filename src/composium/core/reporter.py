@@ -23,6 +23,7 @@ class ReporterProtocol(t.Protocol):
 
 class WithoutReporter:
     """No-op reporter. Used when no reporting integration is configured."""
+
     @contextmanager
     def step(self, _message: str) -> t.Iterator[None]:
         yield
@@ -39,7 +40,9 @@ class WithoutReporter:
     def feature(self, *features: str) -> None:
         pass
 
+
 _reporter: ReporterProtocol = WithoutReporter()
+
 
 def configure_reporter(reporter: ReporterProtocol) -> None:
     """Set the global reporter instance.
@@ -63,6 +66,7 @@ def configure_reporter(reporter: ReporterProtocol) -> None:
     global _reporter
     _reporter = reporter
 
+
 def get_reporter() -> ReporterProtocol:
     """Return the current global reporter instance."""
     return _reporter
@@ -77,6 +81,7 @@ class AllureReporter:
 
         composium.configure_reporter(composium.AllureReporter(allure))
     """
+
     def __init__(self, allure_module: t.Any) -> None:
         self._allure = allure_module
 

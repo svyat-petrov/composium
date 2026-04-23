@@ -12,10 +12,13 @@ def step(title: str) -> t.Callable:
     Uses the globally configured reporter (WithoutReporter by default).
     Configure with composium.configure_reporter() before tests.
     """
+
     def decorator(func: t.Callable) -> t.Callable:
         @functools.wraps(func)
         def wrapper(*args: t.Any, **kwargs: t.Any) -> t.Any:
             with get_reporter().step(title):
                 return func(*args, **kwargs)
+
         return wrapper
+
     return decorator

@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 ElementOrList = WebElement | list[WebElement] | t.Any | list[t.Any]
 
+
 class LazyElement:
     """Proxy object that locates element(s) lazily — only when accessed.
 
@@ -31,13 +32,13 @@ class LazyElement:
     """
 
     def __init__(
-            self,
-            query: Query,
-            parent: WebDriver | WebElement,
-            *,
-            call: t.Callable[[LazyElement], t.Callable] | None = None,
-            mixin: type[ElementMixin] | None = None,
-            polling: PollingConfig | None = None,
+        self,
+        query: Query,
+        parent: WebDriver | WebElement,
+        *,
+        call: t.Callable[[LazyElement], t.Callable] | None = None,
+        mixin: type[ElementMixin] | None = None,
+        polling: PollingConfig | None = None,
     ) -> None:
         self._query = query
         self._parent = parent
@@ -46,48 +47,42 @@ class LazyElement:
         self._polling = polling
         self._cached_element: ElementOrList | None = None
 
-
     def __repr__(self) -> str:
         locator = self._query.locator
         base = f"LazyElement({locator.by}='{locator.value}', multiple={self._query.multiple})"
         if self._cached_element is not None:
-            return f"{base} -> {self._cached_element}"
+            return f'{base} -> {self._cached_element}'
         return base
-
 
     def __call__(self, *args: t.Any, **kwargs: t.Any) -> t.Any:
         if self._call is not None:
             return self._call(self)(*args, **kwargs)
-        raise TypeError(f"{self!r} is not callable")
-
+        raise TypeError(f'{self!r} is not callable')
 
     def __iter__(self) -> t.Iterator:
         self._ensure_loaded()
         if isinstance(self._cached_element, list):
             return iter(self._cached_element)
-        raise TypeError(f"{self!r} is not iterable (single element)")
-
+        raise TypeError(f'{self!r} is not iterable (single element)')
 
     def __getitem__(self, index: int) -> WebElement | t.Any:
         self._ensure_loaded()
         if not isinstance(self._cached_element, list):
-            raise TypeError(f"{self!r} is not subscriptable (single element)")
+            raise TypeError(f'{self!r} is not subscriptable (single element)')
         if not (0 <= index < len(self._cached_element)):
             self._attach_diagnostics()
             raise IndexError(
-                f"Index {index} out of range. "
-                f"Available elements: {len(self._cached_element)}. "
-                f"Locator: {self._query.locator}"
+                f'Index {index} out of range. '
+                f'Available elements: {len(self._cached_element)}. '
+                f'Locator: {self._query.locator}'
             )
         return self._cached_element[index]
-
 
     def __getattr__(self, name: str) -> t.Any:
         if name.startswith('_'):
             raise AttributeError(f"{self.__class__.__name__} has no attribute '{name}'")
         self._ensure_loaded()
         return getattr(self._cached_element, name)
-
 
     @property
     def query(self) -> Query:
@@ -114,7 +109,6 @@ class LazyElement:
             return len(self._cached_element)
         return 1
 
-
     def load(self, *, reload: bool = False) -> None:
         """Execute query and cache the result. Optionally force reload."""
         if reload:
@@ -125,7 +119,6 @@ class LazyElement:
             if self._mixin is not None:
                 self._bind_mixin()
 
-
     def exists(self) -> bool:
         """Check if element exists without raising. Returns bool."""
         self._cached_element = None
@@ -134,7 +127,6 @@ class LazyElement:
             return True
         except (NoSuchElementException, WebDriverException):
             return False
-
 
     def _ensure_loaded(self) -> None:
         """Load element with configurable polling retry."""
@@ -149,10 +141,7 @@ class LazyElement:
                 )
             except NoSuchElementException:
                 self._attach_diagnostics()
-                raise AssertionError(
-                    f"Element not found after polling {self.polling}: "
-                    f"{self._query.locator}"
-                ) from None
+                raise AssertionError(f'Element not found after polling {self.polling}: {self._query.locator}') from None
 
     def _bind_mixin(self) -> None:
         """Dynamically reassign WebElement's class to include Control methods."""

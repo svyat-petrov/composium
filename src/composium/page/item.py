@@ -11,6 +11,7 @@ from .base_page import BasePage
 @attrs.define
 class ItemMeta:
     """Metadata for Item: name for reporting."""
+
     name: str | None = attrs.field(default=None)
 
 
@@ -32,6 +33,7 @@ class Item(BasePage):
         class PaymentWidget(Widget):
             _methods = Element("xpath::...", multiple=True, item=PaymentMethodItem)
     """
+
     __meta__: t.ClassVar[ItemMeta] = ItemMeta()
 
     @property
@@ -44,6 +46,4 @@ class Item(BasePage):
         if isinstance(self._parent, WebElement):
             return self._parent.is_displayed()
 
-        raise TypeError(
-            f"Item parent must be WebElement, got {type(self._parent).__name__}"
-        )
+        raise TypeError(f'Item parent must be WebElement, got {type(self._parent).__name__}')

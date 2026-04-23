@@ -22,6 +22,7 @@ class CrossPlatformElement:
                 ios=Element("accessibility-id::receiver_name")
             )
     """
+
     def __init__(self, *, android: Element, ios: Element):
         self._android = android
         self._ios = ios
@@ -51,7 +52,7 @@ class CrossPlatformElement:
         raise AttributeError(
             f"CrossPlatformElement '{self._attr_name}' cannot resolve platform "
             f"for driver '{driver.__class__.__name__}'. "
-            f"Expected Android or iOS driver."
+            f'Expected Android or iOS driver.'
         )
 
     @classmethod

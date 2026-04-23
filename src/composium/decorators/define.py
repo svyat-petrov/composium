@@ -34,14 +34,14 @@ def action(title: str) -> t.Callable:
     """Mark a method as a user-facing action with Allure step reporting.
     Actions represent user interactions: tap, select, fill, scroll.
     """
-    return step(f"Action: {title}")
+    return step(f'Action: {title}')
 
 
 def assertion(title: str) -> t.Callable:
     """Mark a method as a verification step with Allure step reporting.
     Assertions represent checks: is_displayed, has_items, verify_text.
     """
-    return step(f"Assert: {title}")
+    return step(f'Assert: {title}')
 
 
 def widget(name: str, *, parent: Locator | str | None = None) -> t.Callable[[type[Widget]], type[Widget]]:
