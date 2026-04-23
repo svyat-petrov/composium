@@ -119,6 +119,10 @@ class LazyElement:
             if self._mixin is not None:
                 self._bind_mixin()
 
+    def reload(self) -> None:
+        """Force reload element from the driver."""
+        self.load(reload=True)
+
     def exists(self) -> bool:
         """Check if element exists without raising. Returns bool."""
         self._cached_element = None
