@@ -37,8 +37,8 @@ class LazyElement:
             *,
             call: t.Callable[[LazyElement], t.Callable] | None = None,
             mixin: type[ElementMixin] | None = None,
-            polling_timeout: float = 5.0,
-    ):
+            polling: PollingConfig | None = None,
+    ) -> None:
         self._query = query
         self._parent = parent
         self._call = call
