@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import typing as t
-
 from appium.webdriver.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+
+from ..core.driver import resolve_driver
 
 
 class BasePage:
@@ -28,30 +28,10 @@ class BasePage:
     @property
     def driver(self) -> WebDriver:
         """Resolved WebDriver instance by walking up the parent chain."""
-        return _resolve_driver(self._parent)
-
-
-def _resolve_driver(context: t.Any) -> WebDriver:
-    """Recursively resolve WebDriver from a parent chain.
-
-    WebDriver → returned directly
-    WebElement → WebElement.parent (reference to WebDriver in Selenium)
-    BasePage → walk up via _parent attribute
-
-    Raises:
-        TypeError: if WebDriver cannot be resolved from the chain.
-    """
-    if isinstance(context, WebDriver):
-        return context
-
-    if isinstance(context, WebElement):
-        return t.cast(WebDriver, context.parent)
-
-    if hasattr(context, '_parent'):
-        return _resolve_driver(getattr(context, '_parent'))
-
-    raise TypeError(
-        f"Cannot resolve WebDriver from {type(context).__name__}. "
-        f"Expected WebDriver, WebElement, or BasePage subclass in the parent chain."
-    )
-
+        driver = resolve_driver(self._parent)
+        if driver is not None:
+            return driver
+        raise TypeError(
+            f"Cannot resolve WebDriver from {type(self._parent).__name__}. "
+            f"Expected WebDriver, WebElement, or BasePage subclass in the parent chain."
+        )
