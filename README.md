@@ -18,13 +18,13 @@ Mobile UI tests are flaky. Standard Page Objects mix logic and element definitio
 ## Installation
 
 ```bash
-pip install composium
+pip install git+https://github.com/svyat-petrov/composium.git
 ```
 
 With Allure integration:
 
 ```bash
-pip install composium[allure]
+pip install git+https://github.com/svyat-petrov/composium.git allure-python-commons
 ```
 
 Requires Python 3.12+.
