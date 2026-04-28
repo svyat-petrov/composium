@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+
+# Secrets / local config
+.env
+.envrc
+.pypirc
+
+# IDE
+.idea/
+.vscode/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Tool caches
+.ruff_cache/
+.mypy_cache/
+
+# metadata pip
+*.egg-info/
